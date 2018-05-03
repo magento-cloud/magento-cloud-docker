@@ -4,6 +4,7 @@ FROM php:7.0-cli
 RUN apt-get update \
   && apt-get install -y \
     quilt \ 
+    socat \ 
     libfreetype6-dev \ 
     libicu-dev \ 
     libjpeg62-turbo-dev \ 
