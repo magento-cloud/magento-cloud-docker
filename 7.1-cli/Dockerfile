@@ -7,7 +7,7 @@ RUN apt-get update \
     libicu-dev \ 
     libjpeg62-turbo-dev \ 
     libmcrypt-dev \ 
-    libpng12-dev \ 
+    libpng-dev \
     libxslt1-dev \ 
     sendmail-bin \ 
     sendmail \ 
@@ -63,6 +63,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 ADD bin/* /usr/local/bin/
 
+RUN ["chmod", "+x", "/usr/local/bin/magento-cloud-build"]
+RUN ["chmod", "+x", "/usr/local/bin/magento-cloud-deploy"]
 RUN ["chmod", "+x", "/usr/local/bin/magento-installer"]
 RUN ["chmod", "+x", "/usr/local/bin/magento-command"]
 RUN ["chmod", "+x", "/usr/local/bin/ece-command"]

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+[ "$DEBUG" = "true" ] && set -x
+
+MAGENTO_COMMAND="magento-command"
+ECE_COMMAND="ece-command"
+
+$ECE_COMMAND deploy
+$ECE_COMMAND post-deploy
+
+echo "Installation complete"
