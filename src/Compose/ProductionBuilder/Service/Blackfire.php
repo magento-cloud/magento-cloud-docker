@@ -16,13 +16,17 @@ use Magento\CloudDocker\Service\ServiceInterface;
 /**
  *
  */
-class Redis implements ServiceBuilderInterface
+class Blackire implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
      */
     private $serviceFactory;
 
+    /**
+     *
+     * @param ServiceFactory $serviceFactory
+     */
     public function __construct(ServiceFactory $serviceFactory)
     {
         $this->serviceFactory = $serviceFactory;
@@ -33,7 +37,7 @@ class Redis implements ServiceBuilderInterface
      */
     public function getName(): string
     {
-        return BuilderInterface::SERVICE_REDIS;
+        return ServiceInterface::SERVICE_BLACKFIRE;
     }
 
     /**
@@ -42,15 +46,16 @@ class Redis implements ServiceBuilderInterface
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_REDIS,
-            $config->getServiceVersion($this->getName()),
+            ServiceInterface::SERVICE_BLACKFIRE,
+            $config->getServiceVersion(ServiceInterface::SERVICE_BLACKFIRE),
             [
-                BuilderInterface::SERVICE_HEALTHCHECK => [
-                    'test' => 'redis-cli ping || exit 1',
-                    'interval' => '30s',
-                    'timeout' => '30s',
-                    'retries' => 3
-                ]
+                'environment' => [
+                    'BLACKFIRE_SERVER_ID' => $config->getBlackfireConfig()['server_id'],
+                    'BLACKFIRE_SERVER_TOKEN' => $config->getBlackfireConfig()['server_token'],
+                    'BLACKFIRE_CLIENT_ID' => $config->getBlackfireConfig()['client_id'],
+                    'BLACKFIRE_CLIENT_TOKEN' => $config->getBlackfireConfig()['client_token']
+                ],
+                'ports' => ["8707"]
             ]
         );
     }

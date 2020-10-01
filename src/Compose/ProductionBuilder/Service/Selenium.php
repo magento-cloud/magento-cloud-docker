@@ -8,7 +8,9 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
@@ -16,13 +18,17 @@ use Magento\CloudDocker\Service\ServiceInterface;
 /**
  *
  */
-class Redis implements ServiceBuilderInterface
+class Selenium implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
      */
     private $serviceFactory;
 
+    /**
+     *
+     * @param ServiceFactory $serviceFactory
+     */
     public function __construct(ServiceFactory $serviceFactory)
     {
         $this->serviceFactory = $serviceFactory;
@@ -33,7 +39,7 @@ class Redis implements ServiceBuilderInterface
      */
     public function getName(): string
     {
-        return BuilderInterface::SERVICE_REDIS;
+        return ServiceInterface::SERVICE_SELENIUM;
     }
 
     /**
@@ -42,26 +48,20 @@ class Redis implements ServiceBuilderInterface
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_REDIS,
-            $config->getServiceVersion($this->getName()),
-            [
-                BuilderInterface::SERVICE_HEALTHCHECK => [
-                    'test' => 'redis-cli ping || exit 1',
-                    'interval' => '30s',
-                    'timeout' => '30s',
-                    'retries' => 3
-                ]
-            ]
+            ServiceInterface::SERVICE_SELENIUM,
+            $config->getServiceVersion(ServiceInterface::SERVICE_SELENIUM),
+            [],
+            $config->getServiceImage(ServiceInterface::SERVICE_SELENIUM)
         );
     }
 
     public function getNetworks(): array
     {
-        return [BuilderInterface::NETWORK_MAGENTO];
+        return [BuilderInterface::NETWORK_MAGENTO_BUILD];
     }
 
     public function getDependsOn(Config $config): array
     {
-        return [];
+        return [BuilderInterface::SERVICE_WEB => []];
     }
 }

@@ -15,18 +15,18 @@ interface BuilderInterface
 {
     public const DIR_MAGENTO = '/app';
 
-    public const SERVICE_GENERIC = 'generic';
+    public const SERVICE_GENERIC = ServiceInterface::SERVICE_GENERIC;
     public const SERVICE_DB = 'db';
     public const SERVICE_DB_QUOTE = 'db-quote';
     public const SERVICE_DB_SALES = 'db-sales';
     public const SERVICE_FPM = 'fpm';
-    public const SERVICE_FPM_XDEBUG = 'fpm_xdebug';
+    public const SERVICE_FPM_XDEBUG = ServiceInterface::SERVICE_FPM_XDEBUG;
     public const SERVICE_BUILD = 'build';
     public const SERVICE_DEPLOY = 'deploy';
     public const SERVICE_WEB = 'web';
     public const SERVICE_VARNISH = 'varnish';
-    public const SERVICE_SELENIUM = 'selenium';
-    public const SERVICE_TLS = 'tls';
+    public const SERVICE_SELENIUM = ServiceInterface::SERVICE_SELENIUM;
+    public const SERVICE_TLS = ServiceInterface::SERVICE_TLS;
     public const SERVICE_RABBITMQ = ServiceInterface::SERVICE_RABBITMQ;
     public const SERVICE_REDIS = ServiceInterface::SERVICE_REDIS;
     public const SERVICE_ELASTICSEARCH = ServiceInterface::SERVICE_ELASTICSEARCH;

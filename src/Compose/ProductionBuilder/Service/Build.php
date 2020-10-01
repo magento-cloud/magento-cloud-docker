@@ -9,7 +9,7 @@ namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
-use Magento\CloudDocker\Compose\ProductionBuilder\ServiceInterface as BuilderServiceInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
@@ -18,7 +18,7 @@ use Magento\CloudDocker\Service\ServiceInterface;
 /**
  *
  */
-class Build implements BuilderServiceInterface
+class Build implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory

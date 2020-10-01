@@ -18,7 +18,7 @@ class ServicePool
     private $services;
 
     /**
-     * @param ServiceInterface[] $services
+     * @param ServiceBuilderInterface[] $services
      */
     public function __construct(array $services)
     {
@@ -26,7 +26,7 @@ class ServicePool
     }
 
     /**
-     * @return ServiceInterface[]
+     * @return ServiceBuilderInterface[]
      */
     public function getServices(): array
     {

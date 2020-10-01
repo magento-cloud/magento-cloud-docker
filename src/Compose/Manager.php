@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CloudDocker\Compose;
 
-use Magento\CloudDocker\Compose\ProductionBuilder\ServiceInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 
 /**
@@ -49,7 +49,7 @@ class Manager
     }
 
 
-    public function addServiceObject(ServiceInterface $service)
+    public function addServiceObject(ServiceBuilderInterface $service)
     {
         $hostname = $service->getName() . '.' . $this->config->getHost();
 

@@ -9,15 +9,16 @@ namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
 use Magento\CloudDocker\Compose\Php\ExtensionResolver;
-use Magento\CloudDocker\Compose\ProductionBuilder\ServiceInterface as BuilderServiceInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Config\Environment\Converter;
 use Magento\CloudDocker\Service\ServiceFactory;
+use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
  *
  */
-class Generic implements BuilderServiceInterface
+class Generic implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
@@ -64,7 +65,7 @@ class Generic implements BuilderServiceInterface
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            $this->getName(),
+            ServiceInterface::SERVICE_GENERIC,
             $config->getServiceVersion(BuilderInterface::SERVICE_GENERIC),
             [
                 'env_file' => './.docker/config.env',

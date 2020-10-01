@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\ServiceInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Config\Source\SourceInterface;
 use Magento\CloudDocker\Service\ServiceFactory;
@@ -16,7 +16,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 /**
  *
  */
-class ElasticSearch implements ServiceInterface
+class ElasticSearch implements ServiceBuilderInterface
 {
     private const INSTALLED_PLUGINS = ['analysis-icu', 'analysis-phonetic'];
     /**

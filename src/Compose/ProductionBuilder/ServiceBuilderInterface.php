@@ -9,7 +9,7 @@ namespace Magento\CloudDocker\Compose\ProductionBuilder;
 
 use Magento\CloudDocker\Config\Config;
 
-interface ServiceInterface
+interface ServiceBuilderInterface
 {
     /**
      * Returns name of the service

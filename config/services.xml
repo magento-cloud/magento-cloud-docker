@@ -27,6 +27,8 @@
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Redis" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\RabbitMq" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Mailhog" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Blackire" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\FpmXdebug" />
             </argument>
         </service>
         <service id="Magento\CloudDocker\Compose\ProductionBuilder" shared="false">

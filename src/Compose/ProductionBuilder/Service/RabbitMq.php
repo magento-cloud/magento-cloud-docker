@@ -8,14 +8,15 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\ServiceInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
+use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
  *
  */
-class RabbitMq implements ServiceInterface
+class RabbitMq implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
@@ -41,7 +42,7 @@ class RabbitMq implements ServiceInterface
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            $this->getName(),
+            ServiceInterface::SERVICE_RABBITMQ,
             $config->getServiceVersion($this->getName())
         );
     }

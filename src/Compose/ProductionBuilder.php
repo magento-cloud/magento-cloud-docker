@@ -60,11 +60,6 @@ class ProductionBuilder implements BuilderInterface
     private $fileList;
 
     /**
-     * @var ExtensionResolver
-     */
-    private $phpExtension;
-
-    /**
      * @var ManagerFactory
      */
     private $managerFactory;
@@ -91,7 +86,6 @@ class ProductionBuilder implements BuilderInterface
      * @param ServiceFactory $serviceFactory
      * @param FileList $fileList
      * @param Converter $converter
-     * @param ExtensionResolver $phpExtension
      * @param ManagerFactory $managerFactory
      * @param VolumeResolver $volumeResolver
      * @param ServicePool $servicePool
@@ -102,7 +96,6 @@ class ProductionBuilder implements BuilderInterface
         ServiceFactory $serviceFactory,
         FileList $fileList,
         Converter $converter,
-        ExtensionResolver $phpExtension,
         ManagerFactory $managerFactory,
         VolumeResolver $volumeResolver,
         ServicePool $servicePool,
@@ -112,7 +105,6 @@ class ProductionBuilder implements BuilderInterface
         $this->serviceFactory = $serviceFactory;
         $this->fileList = $fileList;
         $this->converter = $converter;
-        $this->phpExtension = $phpExtension;
         $this->managerFactory = $managerFactory;
         $this->volumeResolver = $volumeResolver;
         $this->servicePool = $servicePool;
@@ -132,7 +124,9 @@ class ProductionBuilder implements BuilderInterface
         $manager = $this->managerFactory->create($config);
 
         foreach ($this->servicePool->getServices() as $service) {
-            if ($config->hasServiceEnabled($service->getName()) || in_array($service->getName(), self::$defaultServices)) {
+            if ($config->hasServiceEnabled($service->getName())
+                || in_array($service->getName(), self::$defaultServices)
+            ) {
                 $manager->addServiceObject($service);
             }
         }
@@ -272,73 +266,6 @@ class ProductionBuilder implements BuilderInterface
                 $cliDepends
             );
         }
-
-        if ($config->hasServiceEnabled(ServiceInterface::SERVICE_BLACKFIRE)) {
-            $manager->addService(
-                ServiceInterface::SERVICE_BLACKFIRE,
-                $this->serviceFactory->create(
-                    ServiceInterface::SERVICE_BLACKFIRE,
-                    $config->getServiceVersion(ServiceInterface::SERVICE_BLACKFIRE),
-                    [
-                        'environment' => [
-                            'BLACKFIRE_SERVER_ID' => $config->getBlackfireConfig()['server_id'],
-                            'BLACKFIRE_SERVER_TOKEN' => $config->getBlackfireConfig()['server_token'],
-                            'BLACKFIRE_CLIENT_ID' => $config->getBlackfireConfig()['client_id'],
-                            'BLACKFIRE_CLIENT_TOKEN' => $config->getBlackfireConfig()['client_token']
-                        ],
-                        'ports' => ["8707"]
-                    ]
-                ),
-                [self::NETWORK_MAGENTO],
-                []
-            );
-        }
-
-        $phpExtensions = $this->phpExtension->get($config);
-
-        /**
-         * Include Xdebug if --with-xdebug is set
-         */
-        if ($config->hasServiceEnabled(ServiceInterface::SERVICE_FPM_XDEBUG)) {
-            $envVariables = ['PHP_EXTENSIONS' => implode(' ', array_unique(array_merge($phpExtensions, ['xdebug'])))];
-            if ($config->get(SourceInterface::SYSTEM_SET_DOCKER_HOST)) {
-                $envVariables['SET_DOCKER_HOST'] = true;
-            }
-            $manager->addService(
-                self::SERVICE_FPM_XDEBUG,
-                $this->serviceFactory->create(
-                    ServiceInterface::SERVICE_FPM_XDEBUG,
-                    $phpVersion,
-                    [
-                        'volumes' => $volumesRo,
-                        'environment' => $this->converter->convert($envVariables)
-                    ]
-                ),
-                [self::NETWORK_MAGENTO],
-                [self::SERVICE_DB => []]
-            );
-        }
-
-        /**
-         * Generic service.
-         */
-        $manager->addService(
-            self::SERVICE_GENERIC,
-            $this->serviceFactory->create(
-                ServiceInterface::SERVICE_GENERIC,
-                $config->getServiceVersion(self::SERVICE_GENERIC),
-                [
-                    'env_file' => './.docker/config.env',
-                    'environment' => $this->converter->convert(
-                        [
-                            'PHP_EXTENSIONS' => implode(' ', $phpExtensions),
-                        ]
-                    )
-                ]
-            ),
-            [],
-            []
-        );
 
         return $manager;
     }
