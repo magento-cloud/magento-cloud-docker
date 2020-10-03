@@ -37,13 +37,21 @@ class Mailhog implements ServiceBuilderInterface
     }
 
     /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return $this->getName();
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_MAILHOG,
-            $this->serviceFactory->getDefaultVersion(BuilderInterface::SERVICE_MAILHOG),
+            $this->getServiceName(),
+            $this->serviceFactory->getDefaultVersion($this->getServiceName()),
             [
                 'ports' => [
                     $config->getMailHogSmtpPort() . ':1025',

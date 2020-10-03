@@ -11,7 +11,6 @@ use Magento\CloudDocker\Compose\BuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
-use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
  *
@@ -37,13 +36,21 @@ class RabbitMq implements ServiceBuilderInterface
     }
 
     /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return $this->getName();
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_RABBITMQ,
-            $config->getServiceVersion($this->getName())
+            $this->getServiceName(),
+            $config->getServiceVersion($this->getServiceName())
         );
     }
 

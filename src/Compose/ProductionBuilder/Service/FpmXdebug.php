@@ -66,6 +66,14 @@ class FpmXdebug implements ServiceBuilderInterface
     }
 
     /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return ServiceInterface::SERVICE_FPM_XDEBUG;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
@@ -78,7 +86,7 @@ class FpmXdebug implements ServiceBuilderInterface
         }
 
         return $this->serviceFactory->create(
-            BuilderInterface::SERVICE_FPM_XDEBUG,
+            $this->getServiceName(),
             $config->getServiceVersion(ServiceInterface::SERVICE_PHP),
             [
                 'volumes' => $this->volume->getRo($config),

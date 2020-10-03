@@ -8,47 +8,36 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\Php\ExtensionResolver;
+use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
+use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
-use Magento\CloudDocker\Config\Environment\Converter;
 use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
  *
  */
-class Generic implements ServiceBuilderInterface
+class Web implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
      */
     private $serviceFactory;
-
     /**
-     * @var Converter
+     * @var Volume
      */
-    private $converter;
-
-    /**
-     * @var ExtensionResolver
-     */
-    private $phpExtension;
+    private $volume;
 
     /**
      *
      * @param ServiceFactory $serviceFactory
-     * @param Converter $converter
-     * @param ExtensionResolver $phpExtension
+     * @param Volume $volume
      */
-    public function __construct(
-        ServiceFactory $serviceFactory,
-        Converter $converter,
-        ExtensionResolver $phpExtension
-    ) {
+    public function __construct(ServiceFactory $serviceFactory, Volume $volume)
+    {
         $this->serviceFactory = $serviceFactory;
-        $this->converter = $converter;
-        $this->phpExtension = $phpExtension;
+        $this->volume = $volume;
     }
 
     /**
@@ -56,15 +45,12 @@ class Generic implements ServiceBuilderInterface
      */
     public function getName(): string
     {
-        return BuilderInterface::SERVICE_GENERIC;
+        return BuilderInterface::SERVICE_WEB;
     }
 
-    /**
-     * @return string
-     */
     public function getServiceName(): string
     {
-        return $this->getName();
+        return ServiceInterface::SERVICE_NGINX;
     }
 
     /**
@@ -74,25 +60,23 @@ class Generic implements ServiceBuilderInterface
     {
         return $this->serviceFactory->create(
             $this->getServiceName(),
-            $config->getServiceVersion($this->getServiceName()),
+            $config->getServiceVersion(ServiceInterface::SERVICE_NGINX),
             [
-                'env_file' => './.docker/config.env',
-                'environment' => $this->converter->convert(
-                    [
-                        'PHP_EXTENSIONS' => implode(' ', $this->phpExtension->get($config)),
-                    ]
-                )
+                'volumes' => $this->volume->getRo($config),
+                'environment' => [
+                    'WITH_XDEBUG=' . (int)$config->hasServiceEnabled(ServiceInterface::SERVICE_FPM_XDEBUG)
+                ]
             ]
         );
     }
 
     public function getNetworks(): array
     {
-        return [];
+        return [BuilderInterface::NETWORK_MAGENTO];
     }
 
     public function getDependsOn(Config $config): array
     {
-        return [];
+        return [BuilderInterface::SERVICE_FPM => []];
     }
 }

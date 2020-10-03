@@ -38,6 +38,14 @@ class ElasticSearch implements ServiceBuilderInterface
     }
 
     /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return $this->getName();
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
@@ -56,8 +64,8 @@ class ElasticSearch implements ServiceBuilderInterface
         }
 
         return $this->serviceFactory->create(
-            $this->getName(),
-            $config->getServiceVersion($this->getName()),
+            $this->getServiceName(),
+            $config->getServiceVersion($this->getServiceName()),
             !empty($esEnvVars) ? ['environment' => $esEnvVars] : []
         );
     }

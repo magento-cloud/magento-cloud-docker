@@ -8,17 +8,15 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\Php\ExtensionResolver;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
-use Magento\CloudDocker\Config\Environment\Converter;
 use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
  *
  */
-class Generic implements ServiceBuilderInterface
+class Tls implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
@@ -26,29 +24,12 @@ class Generic implements ServiceBuilderInterface
     private $serviceFactory;
 
     /**
-     * @var Converter
-     */
-    private $converter;
-
-    /**
-     * @var ExtensionResolver
-     */
-    private $phpExtension;
-
-    /**
      *
      * @param ServiceFactory $serviceFactory
-     * @param Converter $converter
-     * @param ExtensionResolver $phpExtension
      */
-    public function __construct(
-        ServiceFactory $serviceFactory,
-        Converter $converter,
-        ExtensionResolver $phpExtension
-    ) {
+    public function __construct(ServiceFactory $serviceFactory)
+    {
         $this->serviceFactory = $serviceFactory;
-        $this->converter = $converter;
-        $this->phpExtension = $phpExtension;
     }
 
     /**
@@ -56,12 +37,9 @@ class Generic implements ServiceBuilderInterface
      */
     public function getName(): string
     {
-        return BuilderInterface::SERVICE_GENERIC;
+        return ServiceInterface::SERVICE_TLS;
     }
 
-    /**
-     * @return string
-     */
     public function getServiceName(): string
     {
         return $this->getName();
@@ -76,23 +54,34 @@ class Generic implements ServiceBuilderInterface
             $this->getServiceName(),
             $config->getServiceVersion($this->getServiceName()),
             [
-                'env_file' => './.docker/config.env',
-                'environment' => $this->converter->convert(
-                    [
-                        'PHP_EXTENSIONS' => implode(' ', $this->phpExtension->get($config)),
+                'networks' => [
+                    BuilderInterface::NETWORK_MAGENTO => [
+                        'aliases' => [$config->getHost()]
                     ]
-                )
+                ],
+                'environment' => ['UPSTREAM_HOST' => $this->getBackendService($config)],
+                'ports' => [
+                    $config->getPort() . ':80',
+                    $config->getTlsPort() . ':443'
+                ]
             ]
         );
     }
 
     public function getNetworks(): array
     {
-        return [];
+        return [BuilderInterface::NETWORK_MAGENTO];
     }
 
     public function getDependsOn(Config $config): array
     {
-        return [];
+        return [$this->getBackendService($config) => []];
+    }
+
+    private function getBackendService(Config $config): string
+    {
+        return $config->hasServiceEnabled(ServiceInterface::SERVICE_VARNISH)
+            ? BuilderInterface::SERVICE_VARNISH
+            : BuilderInterface::SERVICE_WEB;
     }
 }

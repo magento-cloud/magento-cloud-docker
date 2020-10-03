@@ -16,7 +16,7 @@ use Magento\CloudDocker\Service\ServiceInterface;
 /**
  *
  */
-class Blackire implements ServiceBuilderInterface
+class Blackfire implements ServiceBuilderInterface
 {
     /**
      * @var ServiceFactory
@@ -43,11 +43,19 @@ class Blackire implements ServiceBuilderInterface
     /**
      * @inheritDoc
      */
+    public function getServiceName(): string
+    {
+        return $this->getName();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_BLACKFIRE,
-            $config->getServiceVersion(ServiceInterface::SERVICE_BLACKFIRE),
+            $this->getServiceName(),
+            $config->getServiceVersion($this->getServiceName()),
             [
                 'environment' => [
                     'BLACKFIRE_SERVER_ID' => $config->getBlackfireConfig()['server_id'],
@@ -60,11 +68,17 @@ class Blackire implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];

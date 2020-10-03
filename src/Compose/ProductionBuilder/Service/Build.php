@@ -55,12 +55,20 @@ class Build implements ServiceBuilderInterface
     }
 
     /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return ServiceInterface::SERVICE_PHP_CLI;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_PHP_CLI,
+            $this->getServiceName(),
             $config->getServiceVersion(ServiceInterface::SERVICE_PHP),
             ['volumes' => $this->volume->getBuild($config)]
         );

@@ -8,9 +8,7 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
@@ -42,22 +40,27 @@ class Selenium implements ServiceBuilderInterface
         return ServiceInterface::SERVICE_SELENIUM;
     }
 
+    public function getServiceName(): string
+    {
+        return $this->getName();
+    }
+
     /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            ServiceInterface::SERVICE_SELENIUM,
-            $config->getServiceVersion(ServiceInterface::SERVICE_SELENIUM),
+            $this->getServiceName(),
+            $config->getServiceVersion($this->getServiceName()),
             [],
-            $config->getServiceImage(ServiceInterface::SERVICE_SELENIUM)
+            $config->getServiceImage($this->getServiceName())
         );
     }
 
     public function getNetworks(): array
     {
-        return [BuilderInterface::NETWORK_MAGENTO_BUILD];
+        return [BuilderInterface::NETWORK_MAGENTO];
     }
 
     public function getDependsOn(Config $config): array

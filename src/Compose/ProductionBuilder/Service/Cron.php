@@ -55,12 +55,20 @@ class Cron implements ServiceBuilderInterface
     }
 
     /**
+     * @return string
+     */
+    public function getServiceName(): string
+    {
+        return ServiceInterface::SERVICE_PHP_CLI;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getConfig(Config $config): array
     {
         $cron = $this->serviceFactory->create(
-            ServiceInterface::SERVICE_PHP_CLI,
+            $this->getServiceName(),
             $config->getServiceVersion(ServiceInterface::SERVICE_PHP),
             ['command' => 'run-cron']
         );

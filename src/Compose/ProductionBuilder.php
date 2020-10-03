@@ -7,26 +7,16 @@ declare(strict_types=1);
 
 namespace Magento\CloudDocker\Compose;
 
-use Magento\CloudDocker\App\GenericException;
-use Magento\CloudDocker\App\ConfigurationMismatchException;
-use Magento\CloudDocker\Compose\Php\ExtensionResolver;
-use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServicePool;
-use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Compose\ProductionBuilder\VolumeResolver;
 use Magento\CloudDocker\Config\Config;
-use Magento\CloudDocker\Config\Environment\Converter;
-use Magento\CloudDocker\Config\Source\SourceInterface;
 use Magento\CloudDocker\Filesystem\FileList;
-use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
  * Production compose configuration.
  *
  * @codeCoverageIgnore
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class ProductionBuilder implements BuilderInterface
 {
@@ -38,21 +28,15 @@ class ProductionBuilder implements BuilderInterface
         self::SYNC_ENGINE_MOUNT
     ];
 
-    private static $defaultServices = [
+    private static $requiredServices = [
         self::SERVICE_GENERIC,
         self::SERVICE_DEPLOY,
         self::SERVICE_BUILD,
+        self::SERVICE_TLS,
+        self::SERVICE_WEB,
+        self::SERVICE_FPM,
+        self::SERVICE_DB,
     ];
-
-    /**
-     * @var ServiceFactory
-     */
-    private $serviceFactory;
-
-    /**
-     * @var Converter
-     */
-    private $converter;
 
     /**
      * @var FileList
@@ -73,43 +57,23 @@ class ProductionBuilder implements BuilderInterface
      * @var ServicePool
      */
     private $servicePool;
-    /**
-     * @var Volume
-     */
-    private $volume;
-    /**
-     * @var CliDepend
-     */
-    private $cliDepend;
 
     /**
-     * @param ServiceFactory $serviceFactory
      * @param FileList $fileList
-     * @param Converter $converter
      * @param ManagerFactory $managerFactory
      * @param VolumeResolver $volumeResolver
      * @param ServicePool $servicePool
-     * @param Volume $volume
-     * @param CliDepend $cliDepend
      */
     public function __construct(
-        ServiceFactory $serviceFactory,
         FileList $fileList,
-        Converter $converter,
         ManagerFactory $managerFactory,
         VolumeResolver $volumeResolver,
-        ServicePool $servicePool,
-        Volume $volume,
-        CliDepend $cliDepend
+        ServicePool $servicePool
     ) {
-        $this->serviceFactory = $serviceFactory;
         $this->fileList = $fileList;
-        $this->converter = $converter;
         $this->managerFactory = $managerFactory;
         $this->volumeResolver = $volumeResolver;
         $this->servicePool = $servicePool;
-        $this->volume = $volume;
-        $this->cliDepend = $cliDepend;
     }
 
     /**
@@ -124,28 +88,22 @@ class ProductionBuilder implements BuilderInterface
         $manager = $this->managerFactory->create($config);
 
         foreach ($this->servicePool->getServices() as $service) {
-            if ($config->hasServiceEnabled($service->getName())
-                || in_array($service->getName(), self::$defaultServices)
+            if ($config->hasServiceEnabled($service->getServiceName())
+                || in_array($service->getName(), self::$requiredServices)
             ) {
                 $manager->addServiceObject($service);
             }
         }
 
-
-        $phpVersion = $config->getServiceVersion(ServiceInterface::SERVICE_PHP);
-        $dbVersion = $config->getServiceVersion(ServiceInterface::SERVICE_DB);
-        $cliDepends = $this->cliDepend->getList($config);
-
         $manager->addNetwork(self::NETWORK_MAGENTO, ['driver' => 'bridge']);
         $manager->addNetwork(self::NETWORK_MAGENTO_BUILD, ['driver' => 'bridge']);
 
-        $mounts = $config->getMounts();
-
         $hasGenerated = !version_compare($config->getMagentoVersion(), '2.2.0', '<');
+
         $volumes = [];
 
         foreach (array_keys($this->volumeResolver->getMagentoVolumes(
-            $mounts,
+            $config->getMounts(),
             false,
             $hasGenerated
         )) as $volumeName) {
@@ -154,117 +112,14 @@ class ProductionBuilder implements BuilderInterface
 
         $manager->setVolumes($volumes);
 
-        $volumesRo = $this->volume->getRo($config);
-        $volumesRw = $this->volume->getRw($config);
-        $volumesMount = $this->volume->getMount($config);
-
-        $this->addDbService($manager, $config, self::SERVICE_DB, $dbVersion, $volumesMount);
+        $manager->addVolume($config->getNameWithPrefix() . BuilderInterface::VOLUME_MAGENTO_DB, []);
 
         if ($config->hasServiceEnabled(ServiceInterface::SERVICE_DB_QUOTE)) {
-            $this->addDbService($manager, $config, self::SERVICE_DB_QUOTE, $dbVersion, $volumesMount);
+            $manager->addVolume(self::VOLUME_MAGENTO_DB_QUOTE, []);
         }
 
         if ($config->hasServiceEnabled(ServiceInterface::SERVICE_DB_SALES)) {
-            $this->addDbService($manager, $config, self::SERVICE_DB_SALES, $dbVersion, $volumesMount);
-        }
-
-        if ($config->hasServiceEnabled(self::SERVICE_NODE)) {
-            $manager->addService(
-                self::SERVICE_NODE,
-                $this->serviceFactory->create(
-                    ServiceInterface::SERVICE_NODE,
-                    $config->getServiceVersion(ServiceInterface::SERVICE_NODE),
-                    ['volumes' => $volumesRo]
-                ),
-                [self::NETWORK_MAGENTO],
-                []
-            );
-        }
-
-        $manager->addService(
-            self::SERVICE_FPM,
-            $this->serviceFactory->create(ServiceInterface::SERVICE_PHP_FPM, $phpVersion, ['volumes' => $volumesRo]),
-            [self::NETWORK_MAGENTO],
-            [self::SERVICE_DB => ['condition' => 'service_healthy']]
-        );
-
-        $webConfig = [
-            'volumes' => $volumesRo,
-            'environment' => [
-                'WITH_XDEBUG=' . (int)$config->hasServiceEnabled(ServiceInterface::SERVICE_FPM_XDEBUG)
-            ]
-        ];
-
-        $manager->addService(
-            self::SERVICE_WEB,
-            $this->serviceFactory->create(
-                ServiceInterface::SERVICE_NGINX,
-                $config->getServiceVersion(ServiceInterface::SERVICE_NGINX),
-                $webConfig
-            ),
-            [self::NETWORK_MAGENTO],
-            [self::SERVICE_FPM => []]
-        );
-
-        if ($config->hasServiceEnabled(self::SERVICE_VARNISH)) {
-            $manager->addService(
-                self::SERVICE_VARNISH,
-                $this->serviceFactory->create(
-                    ServiceInterface::SERVICE_VARNISH,
-                    $config->getServiceVersion(ServiceInterface::SERVICE_VARNISH)
-                ),
-                [self::NETWORK_MAGENTO],
-                [self::SERVICE_WEB => []]
-            );
-        }
-
-        $tlsBackendService = $config->hasServiceEnabled(ServiceInterface::SERVICE_VARNISH)
-            ? self::SERVICE_VARNISH
-            : self::SERVICE_WEB;
-        $manager->addService(
-            self::SERVICE_TLS,
-            $this->serviceFactory->create(
-                ServiceInterface::SERVICE_TLS,
-                $config->getServiceVersion(ServiceInterface::SERVICE_TLS),
-                [
-                    'networks' => [
-                        self::NETWORK_MAGENTO => [
-                            'aliases' => [$config->getHost()]
-                        ]
-                    ],
-                    'environment' => ['UPSTREAM_HOST' => $tlsBackendService],
-                    'ports' => [
-                        $config->getPort() . ':80',
-                        $config->getTlsPort() . ':443'
-                    ]
-                ]
-            ),
-            [self::NETWORK_MAGENTO],
-            [$tlsBackendService => []]
-        );
-
-        if ($config->hasSelenium()) {
-            $manager->addService(
-                self::SERVICE_SELENIUM,
-                $this->serviceFactory->create(
-                    ServiceInterface::SERVICE_SELENIUM,
-                    $config->getServiceVersion(ServiceInterface::SERVICE_SELENIUM),
-                    [],
-                    $config->getServiceImage(ServiceInterface::SERVICE_SELENIUM)
-                ),
-                [self::NETWORK_MAGENTO],
-                [self::SERVICE_WEB => []]
-            );
-            $manager->addService(
-                self::SERVICE_TEST,
-                $this->serviceFactory->create(
-                    ServiceInterface::SERVICE_PHP_CLI,
-                    $phpVersion,
-                    ['volumes' => $volumesRw]
-                ),
-                [self::NETWORK_MAGENTO],
-                $cliDepends
-            );
+            $manager->addVolume(self::VOLUME_MAGENTO_DB_SALES, []);
         }
 
         return $manager;
@@ -276,105 +131,5 @@ class ProductionBuilder implements BuilderInterface
     public function getPath(): string
     {
         return $this->fileList->getMagentoDockerCompose();
-    }
-
-    /**
-     * @param string $service
-     * @param Manager $manager
-     * @param string $version
-     * @param array $mounts
-     * @param Config $config
-     * @throws ConfigurationMismatchException
-     * @throws GenericException
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    private function addDbService(
-        Manager $manager,
-        Config $config,
-        string $service,
-        string $version,
-        array $mounts
-    ): void {
-        $volumePrefix = $config->getNameWithPrefix();
-
-        if ($config->hasMariaDbConf()) {
-            $mounts[] = self::VOLUME_MARIADB_CONF . ':/etc/mysql/mariadb.conf.d';
-        }
-
-        $commands = [];
-
-        switch ($service) {
-            case self::SERVICE_DB:
-                $port = $config->getDbPortsExpose();
-
-                $manager->addVolume($volumePrefix . self::VOLUME_MAGENTO_DB, []);
-
-                $mounts[] = $volumePrefix . self::VOLUME_MAGENTO_DB . ':/var/lib/mysql';
-
-                if ($config->hasDbEntrypoint()) {
-                    $mounts[] = self::VOLUME_DOCKER_ETRYPOINT . ':/docker-entrypoint-initdb.d';
-                }
-
-                $serviceType = ServiceInterface::SERVICE_DB;
-
-                if ($config->getDbIncrementIncrement() > 1) {
-                    $commands[] = '--auto_increment_increment=' . $config->getDbIncrementIncrement();
-                }
-
-                if ($config->getDbIncrementOffset() > 1) {
-                    $commands[] = '--auto_increment_offset=' . $config->getDbIncrementOffset();
-                }
-
-                break;
-            case self::SERVICE_DB_QUOTE:
-                $port = $config->getDbQuotePortsExpose();
-
-                $manager->addVolume(self::VOLUME_MAGENTO_DB_QUOTE, []);
-
-                $mounts[] = self::VOLUME_MAGENTO_DB_QUOTE . ':/var/lib/mysql';
-                $mounts[] = self::VOLUME_DOCKER_ETRYPOINT_QUOTE . ':/docker-entrypoint-initdb.d';
-                $serviceType = ServiceInterface::SERVICE_DB_QUOTE;
-                break;
-            case self::SERVICE_DB_SALES:
-                $port = $config->getDbSalesPortsExpose();
-
-                $manager->addVolume(self::VOLUME_MAGENTO_DB_SALES, []);
-
-                $mounts[] = self::VOLUME_MAGENTO_DB_SALES . ':/var/lib/mysql';
-                $mounts[] = self::VOLUME_DOCKER_ETRYPOINT_SALES . ':/docker-entrypoint-initdb.d';
-                $serviceType = ServiceInterface::SERVICE_DB_SALES;
-                break;
-            default:
-                throw new GenericException(sprintf('Configuration for %s service not exist', $service));
-        }
-
-        $dbConfig = [
-            'ports' => [$port ? "$port:3306" : '3306'],
-            'volumes' => $mounts,
-            self::SERVICE_HEALTHCHECK => [
-                'test' => 'mysqladmin ping -h localhost',
-                'interval' => '30s',
-                'timeout' => '30s',
-                'retries' => 3
-            ],
-        ];
-
-        if ($commands) {
-            $dbConfig['command'] = implode(' ', $commands);
-        }
-
-        $manager->addService(
-            $service,
-            $this->serviceFactory->create(
-                $serviceType,
-                $version,
-                $dbConfig,
-                $config->getServiceImage(ServiceInterface::SERVICE_DB)
-            ),
-            [self::NETWORK_MAGENTO],
-            []
-        );
     }
 }

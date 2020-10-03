@@ -12,11 +12,18 @@ use Magento\CloudDocker\Config\Config;
 interface ServiceBuilderInterface
 {
     /**
-     * Returns name of the service
+     * Returns name of the service from BuilderInterface
      *
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Returns name of the service from ServiceInterface
+     *
+     * @return string
+     */
+    public function getServiceName(): string;
 
     /**
      * Returns service configuration based on general configuration

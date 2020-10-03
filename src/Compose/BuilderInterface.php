@@ -24,15 +24,15 @@ interface BuilderInterface
     public const SERVICE_BUILD = 'build';
     public const SERVICE_DEPLOY = 'deploy';
     public const SERVICE_WEB = 'web';
-    public const SERVICE_VARNISH = 'varnish';
+    public const SERVICE_VARNISH = ServiceInterface::SERVICE_VARNISH;
     public const SERVICE_SELENIUM = ServiceInterface::SERVICE_SELENIUM;
     public const SERVICE_TLS = ServiceInterface::SERVICE_TLS;
     public const SERVICE_RABBITMQ = ServiceInterface::SERVICE_RABBITMQ;
     public const SERVICE_REDIS = ServiceInterface::SERVICE_REDIS;
     public const SERVICE_ELASTICSEARCH = ServiceInterface::SERVICE_ELASTICSEARCH;
-    public const SERVICE_NODE = 'node';
+    public const SERVICE_NODE = ServiceInterface::SERVICE_NODE;
     public const SERVICE_CRON = 'cron';
-    public const SERVICE_TEST = 'test';
+    public const SERVICE_TEST = ServiceInterface::SERVICE_TEST;
     public const SERVICE_HEALTHCHECK = 'healthcheck';
     public const SERVICE_MAILHOG = ServiceInterface::SERVICE_MAILHOG;
 
