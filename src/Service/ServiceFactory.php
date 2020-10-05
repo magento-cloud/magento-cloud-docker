@@ -177,6 +177,9 @@ class ServiceFactory
             ->getPackage()
             ->getVersion();
 
+//        $mcdVersion = '1.1';
+
+
         /** Extract minor version. Patch version should not affect images. */
         preg_match('/^\d+\.\d+/', $mcdVersion, $matches);
 

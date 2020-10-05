@@ -22,23 +22,23 @@
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Database\Db" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Database\DbQuote" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Database\DbSales" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Generic" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Build" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Deploy" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Cron" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\ElasticSearch" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Redis" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\RabbitMq" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Node" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\ElasticSearch" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Fpm" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Web" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Varnish" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Tls" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Selenium" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Test" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\FpmXdebug" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Generic" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Build" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Deploy" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\RabbitMq" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Node" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Mailhog" />
                 <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Blackfire" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\FpmXdebug" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Test" />
-                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Selenium" />
+                <argument type="service" id="Magento\CloudDocker\Compose\ProductionBuilder\Service\Cron" />
             </argument>
         </service>
         <service id="Magento\CloudDocker\Compose\ProductionBuilder" shared="false">

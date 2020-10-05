@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service\Database;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
@@ -46,7 +45,7 @@ class DbSales implements ServiceBuilderInterface
      */
     public function getName(): string
     {
-        return BuilderInterface::SERVICE_DB;
+        return BuilderInterface::SERVICE_DB_SALES;
     }
 
     /**
@@ -54,7 +53,7 @@ class DbSales implements ServiceBuilderInterface
      */
     public function getServiceName(): string
     {
-        return ServiceInterface::SERVICE_DB;
+        return ServiceInterface::SERVICE_DB_SALES;
     }
 
     /**

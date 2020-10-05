@@ -24,10 +24,12 @@ class Cron implements ServiceBuilderInterface
      * @var ServiceFactory
      */
     private $serviceFactory;
+
     /**
      * @var Volume
      */
     private $volume;
+
     /**
      * @var CliDepend
      */
@@ -51,7 +53,7 @@ class Cron implements ServiceBuilderInterface
      */
     public function getName(): string
     {
-        return BuilderInterface::SERVICE_REDIS;
+        return BuilderInterface::SERVICE_CRON;
     }
 
     /**
@@ -59,7 +61,7 @@ class Cron implements ServiceBuilderInterface
      */
     public function getServiceName(): string
     {
-        return ServiceInterface::SERVICE_PHP_CLI;
+        return $this->getName();
     }
 
     /**
@@ -68,7 +70,7 @@ class Cron implements ServiceBuilderInterface
     public function getConfig(Config $config): array
     {
         $cron = $this->serviceFactory->create(
-            $this->getServiceName(),
+            ServiceInterface::SERVICE_PHP_CLI,
             $config->getServiceVersion(ServiceInterface::SERVICE_PHP),
             ['command' => 'run-cron']
         );

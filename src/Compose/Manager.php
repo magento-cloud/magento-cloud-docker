@@ -59,7 +59,6 @@ class Manager
 
         $serviceConfig = array_replace($serviceConfig, $service->getConfig($this->config));
 
-
         foreach ($service->getNetworks() as $network) {
             if (!empty($serviceConfig['networks'][$network]['aliases'])) {
                 continue;
