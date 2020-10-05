@@ -48,8 +48,11 @@ class Manager
         $this->config = $config;
     }
 
-
-    public function addServiceObject(ServiceBuilderInterface $service)
+    /**
+     * @param ServiceBuilderInterface $service
+     * @throws \Magento\CloudDocker\App\ConfigurationMismatchException
+     */
+    public function addService(ServiceBuilderInterface $service)
     {
         $hostname = $service->getName() . '.' . $this->config->getHost();
 
@@ -78,47 +81,9 @@ class Manager
     /**
      * @param string $name
      * @param array $extConfig
-     * @param array $networks
-     * @param array $depends
-     */
-    public function addService(string $name, array $extConfig, array $networks, array $depends): void
-    {
-        $hostname = $name . '.' . $this->config->getHost();
-
-        $config = [
-            'hostname' => $hostname,
-        ];
-
-        $config = array_replace($config, $extConfig);
-
-        foreach ($networks as $network) {
-            if (!empty($config['networks'][$network]['aliases'])) {
-                continue;
-            }
-
-            $config['networks'][$network] = [
-                'aliases' => [$hostname]
-            ];
-        }
-
-        $this->services[$name] = [
-            'config' => $config,
-            'depends_on' => $depends,
-        ];
-    }
-
-    /**
-     * @param string $name
-     * @param array $extConfig
      */
     public function updateService(string $name, array $extConfig): void
     {
-        if (!isset($this->services[$name])) {
-            $this->addService($name, $extConfig, [], []);
-
-            return;
-        }
-
         $this->services[$name]['config'] = array_replace(
             $this->services[$name]['config'],
             $extConfig

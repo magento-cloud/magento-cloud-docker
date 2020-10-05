@@ -91,7 +91,7 @@ class ProductionBuilder implements BuilderInterface
             if ($config->hasServiceEnabled($service->getServiceName())
                 || in_array($service->getName(), self::$requiredServices)
             ) {
-                $manager->addServiceObject($service);
+                $manager->addService($service);
             }
         }
 

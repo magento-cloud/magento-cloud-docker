@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder;
 
 use Magento\CloudDocker\Config\Config;
+use Magento\CloudDocker\Service\ServiceInterface;
 
 class Volume
 {
@@ -35,7 +36,7 @@ class Volume
     {
         return $this->volumeResolver->normalize(array_merge(
             $this->volumeResolver->getRootVolume(true),
-            $this->volumeResolver->getDevVolumes($config->hasSelenium()),
+            $this->volumeResolver->getDevVolumes($config->hasServiceEnabled(ServiceInterface::SERVICE_TEST)),
             $this->volumeResolver->getMagentoVolumes($config->getMounts(), true, $this->hasGenerated($config)),
             $this->volumeResolver->getMountVolumes($config->hasTmpMounts())
         ));
@@ -45,7 +46,7 @@ class Volume
     {
         return $this->volumeResolver->normalize(array_merge(
             $this->volumeResolver->getRootVolume(false),
-            $this->volumeResolver->getDevVolumes($config->hasSelenium()),
+            $this->volumeResolver->getDevVolumes($config->hasServiceEnabled(ServiceInterface::SERVICE_TEST)),
             $this->volumeResolver->getMagentoVolumes($config->getMounts(), false, $this->hasGenerated($config)),
             $this->volumeResolver->getMountVolumes($config->hasTmpMounts()),
             $this->volumeResolver->getComposerVolumes()

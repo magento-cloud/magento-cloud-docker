@@ -190,6 +190,12 @@ class CliSource implements SourceInterface
             ]);
         }
 
+        if ($this->input->getOption(self::OPTION_WITH_TEST)) {
+            $repository->set([
+                self::SERVICES_TEST_ENABLED => true
+            ]);
+        }
+
         if ($seleniumImage = $this->input->getOption(self::OPTION_SELENIUM_IMAGE)) {
             $repository->set([
                 self::SERVICES_SELENIUM_ENABLED => true,

@@ -56,7 +56,7 @@ class Test implements ServiceBuilderInterface
 
     public function getServiceName(): string
     {
-        return ServiceInterface::SERVICE_PHP_CLI;
+        return ServiceInterface::SERVICE_TEST;
     }
 
     /**
@@ -65,7 +65,7 @@ class Test implements ServiceBuilderInterface
     public function getConfig(Config $config): array
     {
         return $this->serviceFactory->create(
-            $this->getServiceName(),
+            ServiceInterface::SERVICE_PHP_CLI,
             $config->getServiceVersion(ServiceInterface::SERVICE_PHP),
             ['volumes' => $this->volume->getRw($config)]
         );
