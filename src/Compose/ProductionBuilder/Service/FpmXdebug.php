@@ -18,7 +18,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns FpmXdebug service configuration
  */
 class FpmXdebug implements ServiceBuilderInterface
 {
@@ -43,14 +43,17 @@ class FpmXdebug implements ServiceBuilderInterface
     private $phpExtension;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      * @param Converter $converter
      * @param ExtensionResolver $phpExtension
      */
-    public function __construct(ServiceFactory $serviceFactory, Volume $volume, Converter $converter, ExtensionResolver $phpExtension)
-    {
+    public function __construct(
+        ServiceFactory $serviceFactory,
+        Volume $volume,
+        Converter $converter,
+        ExtensionResolver $phpExtension
+    ) {
         $this->serviceFactory = $serviceFactory;
         $this->volume = $volume;
         $this->converter = $converter;
@@ -66,7 +69,7 @@ class FpmXdebug implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -95,11 +98,17 @@ class FpmXdebug implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [BuilderInterface::SERVICE_DB => []];

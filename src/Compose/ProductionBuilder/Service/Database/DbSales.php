@@ -15,7 +15,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns DbSales service configuration
  */
 class DbSales implements ServiceBuilderInterface
 {
@@ -30,7 +30,6 @@ class DbSales implements ServiceBuilderInterface
     private $volume;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      */
@@ -49,7 +48,7 @@ class DbSales implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -81,11 +80,17 @@ class DbSales implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];
@@ -103,6 +108,7 @@ class DbSales implements ServiceBuilderInterface
         if ($config->hasMariaDbConf()) {
             $mounts[] = BuilderInterface::VOLUME_MARIADB_CONF . ':/etc/mysql/mariadb.conf.d';
         }
+
         $mounts[] = BuilderInterface::VOLUME_MAGENTO_DB_SALES . ':/var/lib/mysql';
         $mounts[] = BuilderInterface::VOLUME_DOCKER_ETRYPOINT_SALES . ':/docker-entrypoint-initdb.d';
 

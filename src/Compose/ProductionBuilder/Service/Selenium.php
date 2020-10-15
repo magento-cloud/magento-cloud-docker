@@ -14,7 +14,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Selenium service configuration
  */
 class Selenium implements ServiceBuilderInterface
 {
@@ -24,7 +24,6 @@ class Selenium implements ServiceBuilderInterface
     private $serviceFactory;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      */
     public function __construct(ServiceFactory $serviceFactory)
@@ -40,6 +39,9 @@ class Selenium implements ServiceBuilderInterface
         return ServiceInterface::SERVICE_SELENIUM;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getServiceName(): string
     {
         return $this->getName();
@@ -58,11 +60,17 @@ class Selenium implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [BuilderInterface::SERVICE_WEB => []];

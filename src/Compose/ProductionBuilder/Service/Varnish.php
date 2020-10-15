@@ -8,15 +8,12 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
-use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Varnish service configuration
  */
 class Varnish implements ServiceBuilderInterface
 {
@@ -26,7 +23,6 @@ class Varnish implements ServiceBuilderInterface
     private $serviceFactory;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      */
     public function __construct(ServiceFactory $serviceFactory)
@@ -42,6 +38,9 @@ class Varnish implements ServiceBuilderInterface
         return BuilderInterface::SERVICE_VARNISH;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getServiceName(): string
     {
         return $this->getName();
@@ -58,11 +57,17 @@ class Varnish implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [BuilderInterface::SERVICE_WEB => []];

@@ -10,7 +10,11 @@ namespace Magento\CloudDocker\Compose\ProductionBuilder;
 
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceInterface;
+use Magento\CloudDocker\App\ConfigurationMismatchException;
 
+/**
+ * Returns volumes configuration
+ */
 class Volume
 {
     /**
@@ -19,7 +23,6 @@ class Volume
     private $volumeResolver;
 
     /**
-     *
      * @param VolumeResolver $volumeResolver
      */
     public function __construct(VolumeResolver $volumeResolver)
@@ -30,7 +33,7 @@ class Volume
     /**
      * @param Config $config
      * @return array
-     * @throws \Magento\CloudDocker\App\ConfigurationMismatchException
+     * @throws ConfigurationMismatchException
      */
     public function getRo(Config $config): array
     {
@@ -42,6 +45,11 @@ class Volume
         ));
     }
 
+    /**
+     * @param Config $config
+     * @return array
+     * @throws ConfigurationMismatchException
+     */
     public function getRw(Config $config): array
     {
         return $this->volumeResolver->normalize(array_merge(
@@ -53,6 +61,11 @@ class Volume
         ));
     }
 
+    /**
+     * @param Config $config
+     * @return array
+     * @throws ConfigurationMismatchException
+     */
     public function getBuild(Config $config): array
     {
         return $this->volumeResolver->normalize(array_merge(
@@ -62,6 +75,11 @@ class Volume
         ));
     }
 
+    /**
+     * @param Config $config
+     * @return array
+     * @throws ConfigurationMismatchException
+     */
     public function getMount(Config $config): array
     {
         return $this->volumeResolver->normalize(
@@ -69,6 +87,11 @@ class Volume
         );
     }
 
+    /**
+     * @param Config $config
+     * @return bool
+     * @throws ConfigurationMismatchException
+     */
     private function hasGenerated(Config $config): bool
     {
         return !version_compare($config->getMagentoVersion(), '2.2.0', '<');

@@ -14,16 +14,20 @@ use Magento\CloudDocker\Config\Source\SourceInterface;
 use Magento\CloudDocker\Service\ServiceFactory;
 
 /**
- *
+ * Returns ElasticSearch service configuration
  */
 class ElasticSearch implements ServiceBuilderInterface
 {
     private const INSTALLED_PLUGINS = ['analysis-icu', 'analysis-phonetic'];
+
     /**
      * @var ServiceFactory
      */
     private $serviceFactory;
 
+    /**
+     * @param ServiceFactory $serviceFactory
+     */
     public function __construct(ServiceFactory $serviceFactory)
     {
         $this->serviceFactory = $serviceFactory;
@@ -38,7 +42,7 @@ class ElasticSearch implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -70,11 +74,17 @@ class ElasticSearch implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];

@@ -13,10 +13,9 @@ use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Config\Environment\Converter;
 use Magento\CloudDocker\Service\ServiceFactory;
-use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Generic service configuration
  */
 class Generic implements ServiceBuilderInterface
 {
@@ -36,7 +35,6 @@ class Generic implements ServiceBuilderInterface
     private $phpExtension;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Converter $converter
      * @param ExtensionResolver $phpExtension
@@ -60,7 +58,7 @@ class Generic implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -86,11 +84,17 @@ class Generic implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];

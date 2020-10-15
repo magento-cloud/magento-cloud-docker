@@ -13,7 +13,7 @@ use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
 
 /**
- *
+ * Returns RabbitMq service configuration
  */
 class RabbitMq implements ServiceBuilderInterface
 {
@@ -22,6 +22,9 @@ class RabbitMq implements ServiceBuilderInterface
      */
     private $serviceFactory;
 
+    /**
+     * @param ServiceFactory $serviceFactory
+     */
     public function __construct(ServiceFactory $serviceFactory)
     {
         $this->serviceFactory = $serviceFactory;
@@ -36,7 +39,7 @@ class RabbitMq implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -54,11 +57,17 @@ class RabbitMq implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];

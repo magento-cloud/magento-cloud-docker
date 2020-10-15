@@ -15,7 +15,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns DbQuote service configuration
  */
 class DbQuote implements ServiceBuilderInterface
 {
@@ -30,7 +30,6 @@ class DbQuote implements ServiceBuilderInterface
     private $volume;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      */
@@ -49,7 +48,7 @@ class DbQuote implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -81,11 +80,17 @@ class DbQuote implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];

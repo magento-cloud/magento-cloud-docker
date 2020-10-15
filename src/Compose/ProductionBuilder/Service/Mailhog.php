@@ -11,10 +11,9 @@ use Magento\CloudDocker\Compose\BuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
-use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Mailhog service configuration
  */
 class Mailhog implements ServiceBuilderInterface
 {
@@ -23,6 +22,9 @@ class Mailhog implements ServiceBuilderInterface
      */
     private $serviceFactory;
 
+    /**
+     * @param ServiceFactory $serviceFactory
+     */
     public function __construct(ServiceFactory $serviceFactory)
     {
         $this->serviceFactory = $serviceFactory;
@@ -37,7 +39,7 @@ class Mailhog implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -61,11 +63,17 @@ class Mailhog implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [];

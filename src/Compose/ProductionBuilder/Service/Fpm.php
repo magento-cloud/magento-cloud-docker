@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
@@ -16,7 +15,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Fpm service configuration
  */
 class Fpm implements ServiceBuilderInterface
 {
@@ -24,13 +23,13 @@ class Fpm implements ServiceBuilderInterface
      * @var ServiceFactory
      */
     private $serviceFactory;
+
     /**
      * @var Volume
      */
     private $volume;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      */
@@ -49,7 +48,7 @@ class Fpm implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -68,11 +67,17 @@ class Fpm implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [BuilderInterface::SERVICE_DB => ['condition' => 'service_healthy']];

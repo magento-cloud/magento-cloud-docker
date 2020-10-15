@@ -12,9 +12,10 @@ use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
+use Magento\CloudDocker\App\ConfigurationMismatchException;
 
 /**
- *
+ * Returns Tls service configuration
  */
 class Tls implements ServiceBuilderInterface
 {
@@ -24,7 +25,6 @@ class Tls implements ServiceBuilderInterface
     private $serviceFactory;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      */
     public function __construct(ServiceFactory $serviceFactory)
@@ -40,6 +40,9 @@ class Tls implements ServiceBuilderInterface
         return ServiceInterface::SERVICE_TLS;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getServiceName(): string
     {
         return $this->getName();
@@ -68,16 +71,27 @@ class Tls implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [$this->getBackendService($config) => []];
     }
 
+    /**
+     * @param Config $config
+     * @return string
+     * @throws ConfigurationMismatchException
+     */
     private function getBackendService(Config $config): string
     {
         return $config->hasServiceEnabled(ServiceInterface::SERVICE_VARNISH)

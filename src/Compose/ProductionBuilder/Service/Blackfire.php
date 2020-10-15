@@ -14,7 +14,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Blackfire service configuration
  */
 class Blackfire implements ServiceBuilderInterface
 {
@@ -24,7 +24,6 @@ class Blackfire implements ServiceBuilderInterface
     private $serviceFactory;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      */
     public function __construct(ServiceFactory $serviceFactory)

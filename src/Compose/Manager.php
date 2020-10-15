@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CloudDocker\Compose;
 
+use Magento\CloudDocker\App\ConfigurationMismatchException;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Config\Config;
 
@@ -50,7 +51,7 @@ class Manager
 
     /**
      * @param ServiceBuilderInterface $service
-     * @throws \Magento\CloudDocker\App\ConfigurationMismatchException
+     * @throws ConfigurationMismatchException
      */
     public function addService(ServiceBuilderInterface $service)
     {

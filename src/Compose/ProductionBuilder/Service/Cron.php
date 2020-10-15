@@ -16,7 +16,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Cron service configuration
  */
 class Cron implements ServiceBuilderInterface
 {
@@ -36,7 +36,6 @@ class Cron implements ServiceBuilderInterface
     private $cliDepend;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      * @param CliDepend $cliDepend
@@ -57,7 +56,7 @@ class Cron implements ServiceBuilderInterface
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getServiceName(): string
     {
@@ -95,11 +94,17 @@ class Cron implements ServiceBuilderInterface
         return $cron;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return $this->cliDepend->getList($config);

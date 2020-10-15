@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\CloudDocker\Compose\ProductionBuilder\Service;
 
 use Magento\CloudDocker\Compose\BuilderInterface;
-use Magento\CloudDocker\Compose\ProductionBuilder\CliDepend;
 use Magento\CloudDocker\Compose\ProductionBuilder\ServiceBuilderInterface;
 use Magento\CloudDocker\Compose\ProductionBuilder\Volume;
 use Magento\CloudDocker\Config\Config;
@@ -16,7 +15,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Web service configuration
  */
 class Web implements ServiceBuilderInterface
 {
@@ -24,13 +23,13 @@ class Web implements ServiceBuilderInterface
      * @var ServiceFactory
      */
     private $serviceFactory;
+
     /**
      * @var Volume
      */
     private $volume;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      */
@@ -48,6 +47,9 @@ class Web implements ServiceBuilderInterface
         return BuilderInterface::SERVICE_WEB;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getServiceName(): string
     {
         return ServiceInterface::SERVICE_NGINX;
@@ -70,11 +72,17 @@ class Web implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return [BuilderInterface::SERVICE_FPM => []];

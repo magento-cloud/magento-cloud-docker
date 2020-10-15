@@ -7,10 +7,14 @@ declare(strict_types=1);
 
 namespace Magento\CloudDocker\Compose\ProductionBuilder;
 
+use Magento\CloudDocker\App\ConfigurationMismatchException;
 use Magento\CloudDocker\Compose\BuilderInterface;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Service\ServiceInterface;
 
+/**
+ * Returns CLI dependencies depending on configuration
+ */
 class CliDepend
 {
     /**
@@ -34,6 +38,11 @@ class CliDepend
         ]
     ];
 
+    /**
+     * @param Config $config
+     * @return array
+     * @throws ConfigurationMismatchException
+     */
     public function getList(Config $config): array
     {
         $cliDepends = $this->getDefault();

@@ -16,7 +16,7 @@ use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
 
 /**
- *
+ * Returns Build service configuration
  */
 class Build implements ServiceBuilderInterface
 {
@@ -24,17 +24,18 @@ class Build implements ServiceBuilderInterface
      * @var ServiceFactory
      */
     private $serviceFactory;
+
     /**
      * @var Volume
      */
     private $volume;
+
     /**
      * @var CliDepend
      */
     private $cliDepend;
 
     /**
-     *
      * @param ServiceFactory $serviceFactory
      * @param Volume $volume
      * @param CliDepend $cliDepend
@@ -74,11 +75,17 @@ class Build implements ServiceBuilderInterface
         );
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getNetworks(): array
     {
         return [BuilderInterface::NETWORK_MAGENTO_BUILD];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDependsOn(Config $config): array
     {
         return $this->cliDepend->getList($config);

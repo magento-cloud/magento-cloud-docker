@@ -28,6 +28,9 @@ class ProductionBuilder implements BuilderInterface
         self::SYNC_ENGINE_MOUNT
     ];
 
+    /**
+     * @var array
+     */
     private static $requiredServices = [
         self::SERVICE_GENERIC,
         self::SERVICE_DEPLOY,
