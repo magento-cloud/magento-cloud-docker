@@ -20,6 +20,7 @@ class AcceptanceCest extends AbstractCest
      */
     public function testProductionMode(\CliTester $I): void
     {
+        $I->runBashCommand('composer --version');
         $I->runBashCommand('ls -al');
         $I->runBashCommand('ls -al .docker');
         $I->assertTrue($I->runEceDockerCommand('build:compose --mode=production'), 'Command build:compose failed');
