@@ -20,19 +20,19 @@ class AcceptanceCest extends AbstractCest
      */
     public function testProductionMode(\CliTester $I): void
     {
-        $I->runBashCommand('composer --version');
+        $I->runBashCommand('cat composer.json');
         $I->runBashCommand('ls -al');
         $I->runBashCommand('ls -al .docker');
         $I->assertTrue($I->runEceDockerCommand('build:compose --mode=production'), 'Command build:compose failed');
         $I->runBashCommand('ls -al .docker');
-        $I->replaceImagesWithGenerated();
-        $I->startEnvironment();
-        $I->runDockerComposeCommand('run build cloud-build');
-        $I->runDockerComposeCommand('run deploy cloud-deploy');
-        $I->runDockerComposeCommand('run deploy cloud-post-deploy');
-        $I->amOnPage('/');
-        $I->see('Home page');
-        $I->see('CMS homepage content goes here.');
+//        $I->replaceImagesWithGenerated();
+//        $I->startEnvironment();
+//        $I->runDockerComposeCommand('run build cloud-build');
+//        $I->runDockerComposeCommand('run deploy cloud-deploy');
+//        $I->runDockerComposeCommand('run deploy cloud-post-deploy');
+//        $I->amOnPage('/');
+//        $I->see('Home page');
+//        $I->see('CMS homepage content goes here.');
     }
 
     /**
