@@ -33,6 +33,7 @@ abstract class AbstractCest
         $I->cloneTemplateToWorkDir(static::TEMPLATE_VERSION);
         $I->createAuthJson();
         $I->runBashCommandRootDir('ls -al');
+        $I->runBashCommandRootDir('ls -al dist');
         $I->createArtifactsDir();
         $I->createArtifactCurrentTestedCode('docker', '1.2.99');
         $I->addArtifactsRepoToComposer();
