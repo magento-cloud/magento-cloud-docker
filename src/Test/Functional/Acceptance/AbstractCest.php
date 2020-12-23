@@ -45,8 +45,8 @@ abstract class AbstractCest
         //$I->addDependencyToComposer('magento/ece-tools', 'dev-develop as 2002.1.99');
 
         $I->assertTrue($I->composerUpdate(), 'Composer update failed');
-        $I->runBashCommand('ls ./vendor/magento/magento-cloud-docker');
-        $I->runBashCommand('ls ./vendor/magento/magento-cloud-docker/dist');
+        $I->runBashCommand('ls -al ./vendor/magento/magento-cloud-docker');
+        $I->runBashCommand('ls -al ./vendor/magento/magento-cloud-docker/dist');
         $I->cacheWorkDir(static::TEMPLATE_VERSION);
     }
 
