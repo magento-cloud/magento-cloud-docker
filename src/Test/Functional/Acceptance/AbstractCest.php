@@ -33,13 +33,13 @@ abstract class AbstractCest
         $I->cloneTemplateToWorkDir(static::TEMPLATE_VERSION);
         $I->createAuthJson();
         $I->runBashCommandRootDir('ls -al');
-//        $I->createArtifactsDir();
-//        $I->createArtifactCurrentTestedCode('docker', '1.2.99');
-//        $I->addArtifactsRepoToComposer();
-//        $I->addDependencyToComposer('magento/magento-cloud-docker', '1.2.99');
+        $I->createArtifactsDir();
+        $I->createArtifactCurrentTestedCode('docker', '1.2.99');
+        $I->addArtifactsRepoToComposer();
+        $I->addDependencyToComposer('magento/magento-cloud-docker', '1.2.99');
 
-        $I->addEceDockerGitRepoToComposer();
-        $I->addDependencyToComposer('magento/magento-cloud-docker', 'dev-develop as 1.2.99');
+//        $I->addEceDockerGitRepoToComposer();
+//        $I->addDependencyToComposer('magento/magento-cloud-docker', 'dev-develop as 1.2.99');
         $I->runBashCommand('ls -al');
         //$I->addEceToolsGitRepoToComposer();
         //$I->addDependencyToComposer('magento/ece-tools', 'dev-develop as 2002.1.99');
