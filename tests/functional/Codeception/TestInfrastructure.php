@@ -461,6 +461,20 @@ class TestInfrastructure extends BaseModule
         return $result->wasSuccessful();
     }
 
+    public function runBashCommandRootDir(string $command): bool
+    {
+        $result = $this->taskExecStack()
+            ->printOutput($this->_getConfig('printOutput'))
+            ->interactive(false)
+            ->dir(codecept_root_dir())
+            ->exec($command)
+            ->run();
+
+        static::$output = $result->getMessage();
+
+        return $result->wasSuccessful();
+    }
+
     /**
      * Runs ece-docker commands
      *
