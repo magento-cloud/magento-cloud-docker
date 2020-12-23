@@ -555,6 +555,7 @@ class TestInfrastructure extends BaseModule
                 return $this->taskComposerUpdate('composer')
                     ->printOutput($this->_getConfig('printOutput'))
                     ->interactive(false)
+                    ->option('-vvv')
                     ->dir($this->getWorkDirPath())
                     ->run()
                     ->wasSuccessful();

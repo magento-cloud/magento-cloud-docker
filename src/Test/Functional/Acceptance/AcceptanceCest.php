@@ -22,10 +22,8 @@ class AcceptanceCest extends AbstractCest
     {
         $I->runBashCommand('cat composer.json');
         $I->runBashCommand('ls -al');
-        $I->runBashCommand('ls -al .docker');
         $I->runBashCommand('ls -al bin');
-        $I->assertTrue($I->runEceDockerCommand('build:compose --mode=production'), 'Command build:compose failed');
-        $I->runBashCommand('ls -al .docker');
+        //$I->assertTrue($I->runEceDockerCommand('build:compose --mode=production'), 'Command build:compose failed');
 //        $I->replaceImagesWithGenerated();
 //        $I->startEnvironment();
 //        $I->runDockerComposeCommand('run build cloud-build');
