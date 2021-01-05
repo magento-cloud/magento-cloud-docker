@@ -32,22 +32,15 @@ abstract class AbstractCest
 
         $I->cloneTemplateToWorkDir(static::TEMPLATE_VERSION);
         $I->createAuthJson();
-        $I->runBashCommandRootDir('ls -al');
-        $I->runBashCommandRootDir('ls -al dist');
         $I->createArtifactsDir();
-        $I->createArtifactCurrentTestedCode('docker', '1.2.99');
+        $I->createArtifactCurrentTestedCode('docker', '1.2.1');
         $I->addArtifactsRepoToComposer();
-        $I->addDependencyToComposer('magento/magento-cloud-docker', '1.2.99');
+        $I->addDependencyToComposer('magento/magento-cloud-docker', '1.2.1');
 
-//        $I->addEceDockerGitRepoToComposer();
-//        $I->addDependencyToComposer('magento/magento-cloud-docker', 'dev-develop as 1.2.99');
-        $I->runBashCommand('ls -al');
-        //$I->addEceToolsGitRepoToComposer();
-        //$I->addDependencyToComposer('magento/ece-tools', 'dev-develop as 2002.1.99');
+        $I->addEceToolsGitRepoToComposer();
+        $I->addDependencyToComposer('magento/ece-tools', 'dev-develop as 2002.1.99');
 
         $I->assertTrue($I->composerUpdate(), 'Composer update failed');
-        $I->runBashCommand('ls -al ./vendor/magento/magento-cloud-docker');
-        $I->runBashCommand('ls -al ./vendor/magento/magento-cloud-docker/dist');
         $I->cacheWorkDir(static::TEMPLATE_VERSION);
     }
 
